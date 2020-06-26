@@ -1,48 +1,35 @@
-﻿using System;
+﻿using DeltaWare.Dependencies.Abstractions;
+using System;
 using System.Collections.Generic;
-using System.Text;
-using DeltaWare.Dependencies.Abstractions;
 
 namespace DeltaWare.Dependencies
 {
     public class DependencyCollection: IDependencyCollection
     {
-        public object Clone()
+        private readonly Dictionary<Type, IDependency> _dependencyTypeMap = new Dictionary<Type, IDependency>();
+
+        public void AddDependency<TDependency>(Func<TDependency> builder, Binding binding = Binding.Bound)
         {
-            throw new NotImplementedException();
+            Type dependencyType = typeof(TDependency);
+
+            IDependency dependency = new Dependency<TDependency>(builder, binding);
+
+            if(_dependencyTypeMap.TryAdd(dependencyType, dependency))
+            {
+                _dependencyTypeMap[dependencyType] = dependency;
+            }
         }
 
-        public TDependency GetDependency<TDependency>()
+        public bool TryAddDependency<TDependency>(Func<TDependency> builder, Binding binding = Binding.Bound)
         {
-            throw new NotImplementedException();
+            Type dependencyType = typeof(TDependency);
+
+            IDependency dependency = new Dependency<TDependency>(builder, binding);
+
+            return _dependencyTypeMap.TryAdd(dependencyType, dependency);
         }
 
-        public List<TDependency> GetDependencies<TDependency>()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool TryGetDependency<TDependency>(out TDependency dependencyInstance)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool HasDependency<TDependency>()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void AddDependency<TDependency>(TDependency dependency, Binding binding = Binding.Bound)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool TryAddDependency<TDependency>(TDependency dependency, Binding binding = Binding.Bound)
+        public IDependencyProvider BuildProvider()
         {
             throw new NotImplementedException();
         }

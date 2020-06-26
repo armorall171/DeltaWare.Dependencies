@@ -2,10 +2,12 @@
 
 namespace DeltaWare.Dependencies.Abstractions
 {
-    public interface IDependencyCollection: IReadOnlyDependencyCollection, IDisposable
+    public interface IDependencyCollection
     {
-        void AddDependency<TDependency>(TDependency dependency, Binding binding = Binding.Bound);
+        void AddDependency<TDependency>(Func<TDependency> dependency, Binding binding = Binding.Bound);
 
-        bool TryAddDependency<TDependency>(TDependency dependency, Binding binding = Binding.Bound);
+        bool TryAddDependency<TDependency>(Func<TDependency> dependency, Binding binding = Binding.Bound);
+
+        IDependencyProvider BuildProvider();
     }
 }

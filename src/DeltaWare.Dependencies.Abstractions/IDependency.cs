@@ -2,7 +2,7 @@
 
 namespace DeltaWare.Dependencies.Abstractions
 {
-    public interface IDependency: ICloneable
+    public interface IDependency
     {
         /// <summary>
         /// The <see cref="Binding"/> of the <see cref="IDependency"/>.

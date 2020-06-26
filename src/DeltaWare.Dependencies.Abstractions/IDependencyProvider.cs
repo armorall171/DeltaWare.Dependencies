@@ -1,21 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace DeltaWare.Dependencies.Abstractions
 {
-    public interface IReadOnlyDependencyCollection : ICloneable
+    public interface IDependencyProvider: IDisposable
     {
         /// <summary>
         /// Returns the <see cref="TDependency"/> if it is not found an Exception will be thrown.
         /// </summary>
         /// <typeparam name="TDependency">The <see cref="TDependency"/> to be returned.</typeparam>
         TDependency GetDependency<TDependency>();
-
-        /// <summary>
-        /// Returns all <see cref="IDependency"/>s that implement the specified Type.
-        /// </summary>
-        /// <typeparam name="TDependency">The implemented type to be returned.</typeparam>
-        List<TDependency> GetDependencies<TDependency>();
 
         /// <summary>
         /// Returns a <see cref="bool"/> specifying if the <see cref="TDependency"/> was found.
@@ -26,7 +19,7 @@ namespace DeltaWare.Dependencies.Abstractions
         bool TryGetDependency<TDependency>(out TDependency dependencyInstance);
 
         /// <summary>
-        /// Returns a <see cref="bool"/> specifying if the <see cref="IReadOnlyDependencyCollection"/> contains the specified type.
+        /// Returns a <see cref="bool"/> specifying if the <see cref="IDependencyProvider"/> contains the specified type.
         /// </summary>
         /// <typeparam name="TDependency"></typeparam>
         /// <returns></returns>

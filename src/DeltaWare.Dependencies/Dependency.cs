@@ -3,25 +3,60 @@ using System;
 
 namespace DeltaWare.Dependencies
 {
-    public class Dependency<TDependency>: IDependency<TDependency>
+    public class Dependency: IDependency, IDisposable
     {
-        private readonly Func<TDependency> _builder;
-
         public Binding Binding { get; }
 
-        public TDependency Instance => _builder.Invoke();
+        public object Instance { get; }
 
-        public Type Type => typeof(TDependency);
+        public Type Type { get; }
 
-        public Dependency(Func<TDependency> builder, Binding binding = Binding.Bound)
+        protected Dependency(Binding binding)
         {
-            _builder = builder;
             Binding = binding;
         }
 
-        public object Clone()
+        public Dependency(object instance, Binding binding = Binding.Bound)
         {
-            return new Dependency<TDependency>(_builder, Binding.Unbound);
+            Type = instance.GetType();
+            Instance = instance;
+
+            if(instance is IDisposable)
+            {
+                Binding = binding;
+            }
+            else
+            {
+                Binding = Binding.Unbound;
+            }
         }
+
+        #region IDisposable
+
+        private volatile bool _disposed;
+
+        public void Dispose()
+        {
+            Dispose(true);
+
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if(_disposed)
+            {
+                return;
+            }
+
+            if(disposing && Binding == Binding.Bound && Instance is IDisposable disposableImplementation)
+            {
+                disposableImplementation.Dispose();
+            }
+
+            _disposed = true;
+        }
+
+        #endregion
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace DeltaWare.Dependencies.Abstractions
 {
-    public interface IDependency<out TDependency>
+    public interface IDependency<out TDependency>: IDependency
     {
         /// <summary>
         /// The current instance of the <see cref="TDependency"/>.
