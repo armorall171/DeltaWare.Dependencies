@@ -14,7 +14,7 @@ namespace DeltaWare.Dependencies
 
             IDependency dependency = new Dependency<TDependency>(builder, binding);
 
-            if(_dependencyTypeMap.TryAdd(dependencyType, dependency))
+            if(!_dependencyTypeMap.TryAdd(dependencyType, dependency))
             {
                 _dependencyTypeMap[dependencyType] = dependency;
             }
@@ -31,7 +31,7 @@ namespace DeltaWare.Dependencies
 
         public IDependencyProvider BuildProvider()
         {
-            throw new NotImplementedException();
+            return new DependencyProvider(_dependencyTypeMap);
         }
     }
 }

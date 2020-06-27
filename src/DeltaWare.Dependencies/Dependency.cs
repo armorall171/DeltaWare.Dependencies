@@ -11,11 +11,6 @@ namespace DeltaWare.Dependencies
 
         public Type Type { get; }
 
-        protected Dependency(Binding binding)
-        {
-            Binding = binding;
-        }
-
         public Dependency(object instance, Binding binding = Binding.Bound)
         {
             Type = instance.GetType();

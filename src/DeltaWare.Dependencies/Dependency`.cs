@@ -3,17 +3,32 @@ using System;
 
 namespace DeltaWare.Dependencies
 {
-    public class Dependency<TDependency>: Dependency, IDependency<TDependency>
+    public class Dependency<TDependency>: IDependency<TDependency>
     {
         private readonly Func<TDependency> _builder;
 
-        public new TDependency Instance => _builder.Invoke();
+        public Binding Binding { get; }
 
-        public new Type Type => typeof(TDependency);
+        object IDependency.Instance => Instance;
 
-        public Dependency(Func<TDependency> builder, Binding binding = Binding.Bound) : base(binding)
+        public TDependency Instance => _builder.Invoke();
+
+        public Type Type => typeof(TDependency);
+
+        public Dependency(Func<TDependency> builder, Binding binding = Binding.Bound)
         {
             _builder = builder;
+            Binding = binding;
+
+
+            if(typeof(TDependency).GetInterface(nameof(IDisposable)) != null)
+            {
+                Binding = binding;
+            }
+            else
+            {
+                Binding = Binding.Unbound;
+            }
         }
     }
 }
