@@ -2,6 +2,7 @@
 using DeltaWare.Dependencies.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DeltaWare.Dependencies
 {
@@ -28,6 +29,34 @@ namespace DeltaWare.Dependencies
             return InstantiateDependency<TDependency>();
         }
 
+        public List<TDependency> GetDependencies<TDependency>()
+        {
+            // Get all registered dependencies that inherit the specified type.
+            IEnumerable<Type> dependencyTypes = _dependencyTypeMap.Keys.Where(k => k.GetInterfaces().Contains(typeof(TDependency)));
+
+            List<TDependency> dependencies = new List<TDependency>();
+
+            foreach(Type dependencyType in dependencyTypes)
+            {
+                TDependency instantiatedDependency;
+
+                if(_instantiatedDependencies.TryGetValue(dependencyType, out IDependency dependency))
+                {
+                    // If the dependency has been instantiated we retrieve the instance.
+                    instantiatedDependency = (TDependency)dependency.Instance;
+                }
+                else
+                {
+                    // If it has not been instantiated we create a new instance.
+                    instantiatedDependency = (TDependency)InstantiateDependency(dependencyType);
+                }
+
+                dependencies.Add(instantiatedDependency);
+            }
+
+            return dependencies;
+        }
+
         public bool TryGetDependency<TDependency>(out TDependency dependencyInstance)
         {
             if(!HasDependency<TDependency>())
@@ -49,16 +78,19 @@ namespace DeltaWare.Dependencies
 
         public TDependency InstantiateDependency<TDependency>()
         {
-            Type dependencyType = typeof(TDependency);
+            return (TDependency)InstantiateDependency(typeof(TDependency));
+        }
 
+        public object InstantiateDependency(Type dependencyType)
+        {
             if(!_dependencyTypeMap.TryGetValue(dependencyType, out IDependency dependency))
             {
                 throw new DependencyNotFoundException(dependencyType);
             }
 
-            TDependency instance = (TDependency)dependency.Instance;
+            object instance = dependency.Instance;
 
-            _instantiatedDependencies.Add(dependencyType, new Dependency(instance, dependency.Binding));
+            _instantiatedDependencies.Add(dependencyType, new Dependency(instance, dependencyType, dependency.Binding));
 
             return instance;
         }

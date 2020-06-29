@@ -11,9 +11,9 @@ namespace DeltaWare.Dependencies
 
         public Type Type { get; }
 
-        public Dependency(object instance, Binding binding = Binding.Bound)
+        public Dependency(object instance, Type type, Binding binding = Binding.Bound)
         {
-            Type = instance.GetType();
+            Type = type;
             Instance = instance;
 
             if(instance is IDisposable)
@@ -24,6 +24,10 @@ namespace DeltaWare.Dependencies
             {
                 Binding = Binding.Unbound;
             }
+        }
+
+        public Dependency(object instance, Binding binding = Binding.Bound) : this(instance, instance.GetType(), binding)
+        {
         }
 
         #region IDisposable

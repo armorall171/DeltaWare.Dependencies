@@ -20,6 +20,11 @@ namespace DeltaWare.Dependencies
             }
         }
 
+        public bool HasDependency<TDependency>()
+        {
+            return _dependencyTypeMap.ContainsKey(typeof(TDependency));
+        }
+
         public bool TryAddDependency<TDependency>(Func<TDependency> builder, Binding binding = Binding.Bound)
         {
             Type dependencyType = typeof(TDependency);

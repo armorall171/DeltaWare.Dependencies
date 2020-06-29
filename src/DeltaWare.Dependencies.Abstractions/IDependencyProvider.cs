@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace DeltaWare.Dependencies.Abstractions
 {
@@ -9,6 +10,8 @@ namespace DeltaWare.Dependencies.Abstractions
         /// </summary>
         /// <typeparam name="TDependency">The <see cref="TDependency"/> to be returned.</typeparam>
         TDependency GetDependency<TDependency>();
+
+        List<TDependency> GetDependencies<TDependency>();
 
         /// <summary>
         /// Returns a <see cref="bool"/> specifying if the <see cref="TDependency"/> was found.
