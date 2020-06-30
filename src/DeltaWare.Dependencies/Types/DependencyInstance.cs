@@ -1,33 +1,25 @@
 ﻿using DeltaWare.Dependencies.Abstractions;
+using DeltaWare.Dependencies.Interfaces;
 using System;
 
-namespace DeltaWare.Dependencies
+namespace DeltaWare.Dependencies.Types
 {
-    public class Dependency: IDependency, IDisposable
+    internal class DependencyInstance: IDependencyInstance
     {
         public Binding Binding { get; }
 
-        public object Instance { get; }
+        public Lifetime Lifetime { get; }
 
         public Type Type { get; }
 
-        public Dependency(object instance, Type type, Binding binding = Binding.Bound)
+        public object Instance { get; }
+
+        internal DependencyInstance(object instance, Type type, Lifetime lifetime, Binding binding)
         {
             Type = type;
             Instance = instance;
-
-            if(instance is IDisposable)
-            {
-                Binding = binding;
-            }
-            else
-            {
-                Binding = Binding.Unbound;
-            }
-        }
-
-        public Dependency(object instance, Binding binding = Binding.Bound) : this(instance, instance.GetType(), binding)
-        {
+            Binding = binding;
+            Lifetime = lifetime;
         }
 
         #region IDisposable
