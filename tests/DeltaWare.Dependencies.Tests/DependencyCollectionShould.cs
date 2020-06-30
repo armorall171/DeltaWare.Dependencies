@@ -1,5 +1,4 @@
-﻿using DeltaWare.Dependencies.Abstractions;
-using DeltaWare.Dependencies.Exceptions;
+﻿using DeltaWare.Dependencies.Exceptions;
 using Shouldly;
 using Xunit;
 
@@ -8,271 +7,181 @@ namespace DeltaWare.Dependencies.Tests
     public class DependencyCollectionShould
     {
         [Fact]
-        public void AddDependencyString()
+        public void GetAddedSingleton()
         {
-            IDependencyCollection dependencies = new DependencyCollection();
+            TestDisposable disposableA;
+            TestDisposable disposableB;
 
-            dependencies.AddDependency(() => "Hello");
-
-            using IDependencyProvider provider = dependencies.BuildProvider();
-
-            provider.HasDependency<string>().ShouldBeTrue();
-            provider.GetDependency<string>().ShouldBe("Hello");
-        }
-
-        [Fact]
-        public void AddDependencyStringOverride()
-        {
-            IDependencyCollection dependencies = new DependencyCollection();
-
-            dependencies.AddDependency(() => "Hello");
-
-            dependencies.AddDependency(() => "New Hello");
-
-            using IDependencyProvider provider = dependencies.BuildProvider();
-
-            provider.HasDependency<string>().ShouldBeTrue();
-            provider.GetDependency<string>().ShouldBe("New Hello");
-        }
-
-        [Fact]
-        public void AddDependencyStringTryAdd()
-        {
-            IDependencyCollection dependencies = new DependencyCollection();
-
-            dependencies.TryAddDependency(() => "Hello").ShouldBeTrue();
-            dependencies.TryAddDependency(() => "New Hello").ShouldBeFalse();
-
-            using IDependencyProvider provider = dependencies.BuildProvider();
-
-            provider.HasDependency<string>().ShouldBeTrue();
-            provider.GetDependency<string>().ShouldBe("Hello");
-        }
-
-        [Fact]
-        public void AddDependencyInt()
-        {
-            IDependencyCollection dependencies = new DependencyCollection();
-
-            dependencies.AddDependency(() => 34);
-
-            using IDependencyProvider provider = dependencies.BuildProvider();
-
-            provider.HasDependency<int>().ShouldBeTrue();
-            provider.GetDependency<int>().ShouldBe(34);
-        }
-
-        [Fact]
-        public void AddDependencyIntOverride()
-        {
-            IDependencyCollection dependencies = new DependencyCollection();
-
-            dependencies.AddDependency(() => 34);
-            dependencies.AddDependency(() => 42);
-
-            using IDependencyProvider provider = dependencies.BuildProvider();
-
-            provider.HasDependency<int>().ShouldBeTrue();
-            provider.GetDependency<int>().ShouldBe(42);
-        }
-
-        [Fact]
-        public void AddDependencyIntTryAdd()
-        {
-            IDependencyCollection dependencies = new DependencyCollection();
-
-            dependencies.TryAddDependency(() => 34).ShouldBeTrue();
-            dependencies.TryAddDependency(() => 42).ShouldBeFalse();
-
-            using IDependencyProvider provider = dependencies.BuildProvider();
-
-            provider.HasDependency<int>().ShouldBeTrue();
-            provider.GetDependency<int>().ShouldBe(34);
-        }
-
-        [Fact]
-        public void AddDependencyDisposableBound()
-        {
-            IDependencyCollection dependencies = new DependencyCollection();
-
-            dependencies.AddDependency(() => new TestDisposable
+            using(IDependencyCollection collection = new DependencyCollection())
             {
-                IntValue = 34,
-                StringValue = "Hello"
-            });
+                collection.AddSingleton(() => new TestDisposable
+                {
+                    IntValue = 171,
+                    StringValue = "Hello World"
+                });
 
-            TestDisposable disposable;
+                collection.TryAddSingleton(() => new TestDisposable()).ShouldBeFalse();
+                collection.HasDependency<TestDisposable>().ShouldBeTrue();
 
-            using(IDependencyProvider provider = dependencies.BuildProvider())
-            {
-                disposable = provider.GetDependency<TestDisposable>();
+                using(IDependencyProvider provider = Should.NotThrow(collection.BuildProvider))
+                {
+                    provider.HasDependency<TestDisposable>().ShouldBeTrue();
 
-                disposable.IntValue.ShouldBe(34);
-                disposable.StringValue.ShouldBe("Hello");
-                disposable.IsDisposed.ShouldBeFalse();
+                    disposableA = Should.NotThrow(provider.GetDependency<TestDisposable>);
+                    disposableA.IsDisposed.ShouldBeFalse();
+                    disposableA.IntValue.ShouldBe(171);
+                    disposableA.StringValue.ShouldBe("Hello World");
 
-                provider.TryGetDependency(out disposable).ShouldBeTrue();
+                    disposableA.IntValue = 1024;
+                    disposableA.StringValue = "No longer hello world";
 
-                disposable.IntValue.ShouldBe(34);
-                disposable.StringValue.ShouldBe("Hello");
-                disposable.IsDisposed.ShouldBeFalse();
+                    disposableB = Should.NotThrow(provider.GetDependency<TestDisposable>);
+                    disposableB.IsDisposed.ShouldBeFalse();
+                    disposableB.IntValue.ShouldBe(1024);
+                    disposableB.StringValue.ShouldBe("No longer hello world");
+                }
+
+                disposableA.IsDisposed.ShouldBeFalse();
+                disposableB.IsDisposed.ShouldBeFalse();
+
+                using(IDependencyProvider provider = Should.NotThrow(collection.BuildProvider))
+                {
+                    provider.HasDependency<TestDisposable>().ShouldBeTrue();
+
+                    disposableA = Should.NotThrow(provider.GetDependency<TestDisposable>);
+                    disposableA.IsDisposed.ShouldBeFalse();
+                    disposableA.IntValue.ShouldBe(1024);
+                    disposableA.StringValue.ShouldBe("No longer hello world");
+                }
+
+                disposableA.IsDisposed.ShouldBeFalse();
+                disposableB.IsDisposed.ShouldBeFalse();
             }
 
-            disposable.IsDisposed.ShouldBeTrue();
-
-            // repeat the test as a new instance should be generated.
-            using(IDependencyProvider provider = dependencies.BuildProvider())
-            {
-                disposable = provider.GetDependency<TestDisposable>();
-
-                disposable.IntValue.ShouldBe(34);
-                disposable.StringValue.ShouldBe("Hello");
-                disposable.IsDisposed.ShouldBeFalse();
-
-                provider.TryGetDependency(out disposable).ShouldBeTrue();
-
-                disposable.IntValue.ShouldBe(34);
-                disposable.StringValue.ShouldBe("Hello");
-                disposable.IsDisposed.ShouldBeFalse();
-            }
-
-            disposable.IsDisposed.ShouldBeTrue();
+            disposableA.IsDisposed.ShouldBeTrue();
+            disposableB.IsDisposed.ShouldBeTrue();
         }
 
         [Fact]
-        public void AddDependencyDisposableUnbound()
+        public void GetAddedScoped()
         {
-            IDependencyCollection dependencies = new DependencyCollection();
+            TestDisposable disposableA;
+            TestDisposable disposableB;
 
-            dependencies.AddDependency(() => new TestDisposable
+            using(IDependencyCollection collection = new DependencyCollection())
             {
-                IntValue = 34,
-                StringValue = "Hello"
-            }, Binding.Unbound);
+                collection.AddScoped(() => new TestDisposable
+                {
+                    IntValue = 171,
+                    StringValue = "Hello World"
+                });
 
-            TestDisposable disposable;
+                collection.TryAddScoped(() => new TestDisposable()).ShouldBeFalse();
+                collection.HasDependency<TestDisposable>().ShouldBeTrue();
 
-            using(IDependencyProvider provider = dependencies.BuildProvider())
-            {
-                disposable = provider.GetDependency<TestDisposable>();
+                using(IDependencyProvider provider = Should.NotThrow(collection.BuildProvider))
+                {
+                    provider.HasDependency<TestDisposable>().ShouldBeTrue();
 
-                disposable.IntValue.ShouldBe(34);
-                disposable.StringValue.ShouldBe("Hello");
-                disposable.IsDisposed.ShouldBeFalse();
+                    disposableA = Should.NotThrow(provider.GetDependency<TestDisposable>);
+                    disposableA.IsDisposed.ShouldBeFalse();
+                    disposableA.IntValue.ShouldBe(171);
+                    disposableA.StringValue.ShouldBe("Hello World");
 
-                provider.TryGetDependency(out disposable).ShouldBeTrue();
+                    disposableA.IntValue = 1024;
+                    disposableA.StringValue = "No longer hello world";
 
-                disposable.IntValue.ShouldBe(34);
-                disposable.StringValue.ShouldBe("Hello");
-                disposable.IsDisposed.ShouldBeFalse();
+                    disposableB = Should.NotThrow(provider.GetDependency<TestDisposable>);
+                    disposableB.IsDisposed.ShouldBeFalse();
+                    disposableB.IntValue.ShouldBe(1024);
+                    disposableB.StringValue.ShouldBe("No longer hello world");
+                }
+
+                disposableA.IsDisposed.ShouldBeTrue();
+                disposableB.IsDisposed.ShouldBeTrue();
+
+                using(IDependencyProvider provider = Should.NotThrow(collection.BuildProvider))
+                {
+                    provider.HasDependency<TestDisposable>().ShouldBeTrue();
+
+                    disposableA = Should.NotThrow(provider.GetDependency<TestDisposable>);
+                    disposableA.IsDisposed.ShouldBeFalse();
+                    disposableA.IntValue.ShouldBe(171);
+                    disposableA.StringValue.ShouldBe("Hello World");
+                }
+
+                disposableA.IsDisposed.ShouldBeTrue();
+                disposableB.IsDisposed.ShouldBeTrue();
             }
 
-            disposable.IsDisposed.ShouldBeFalse();
-
-            disposable.Dispose();
-
-            disposable.IsDisposed.ShouldBeTrue();
+            disposableA.IsDisposed.ShouldBeTrue();
+            disposableB.IsDisposed.ShouldBeTrue();
         }
 
         [Fact]
-        public void AddDependencyInstanceDisposableBound()
+        public void GetAddedTransient()
         {
-            IDependencyCollection dependencies = new DependencyCollection();
+            TestDisposable disposableA;
+            TestDisposable disposableB;
 
-            TestDisposable testDisposable = new TestDisposable
+            using(IDependencyCollection collection = new DependencyCollection())
             {
-                IntValue = 34,
-                StringValue = "Hello"
-            };
+                collection.AddTransient(() => new TestDisposable
+                {
+                    IntValue = 171,
+                    StringValue = "Hello World"
+                });
 
-            dependencies.AddDependency(() => testDisposable);
+                collection.TryAddTransient(() => new TestDisposable()).ShouldBeFalse();
+                collection.HasDependency<TestDisposable>().ShouldBeTrue();
 
-            TestDisposable disposable;
+                using(IDependencyProvider provider = Should.NotThrow(collection.BuildProvider))
+                {
+                    provider.HasDependency<TestDisposable>().ShouldBeTrue();
 
-            using(IDependencyProvider provider = dependencies.BuildProvider())
-            {
-                disposable = provider.GetDependency<TestDisposable>();
+                    disposableA = Should.NotThrow(provider.GetDependency<TestDisposable>);
+                    disposableA.IsDisposed.ShouldBeFalse();
+                    disposableA.IntValue.ShouldBe(171);
+                    disposableA.StringValue.ShouldBe("Hello World");
 
-                disposable.IntValue.ShouldBe(34);
-                disposable.StringValue.ShouldBe("Hello");
-                disposable.IsDisposed.ShouldBeFalse();
+                    disposableA.IntValue = 1024;
+                    disposableA.StringValue = "No longer hello world";
 
-                provider.TryGetDependency(out disposable).ShouldBeTrue();
+                    disposableB = Should.NotThrow(provider.GetDependency<TestDisposable>);
+                    disposableB.IsDisposed.ShouldBeFalse();
+                    disposableB.IntValue.ShouldBe(171);
+                    disposableB.StringValue.ShouldBe("Hello World");
+                }
 
-                disposable.IntValue.ShouldBe(34);
-                disposable.StringValue.ShouldBe("Hello");
-                disposable.IsDisposed.ShouldBeFalse();
+                disposableA.IsDisposed.ShouldBeTrue();
+                disposableB.IsDisposed.ShouldBeTrue();
+
+                using(IDependencyProvider provider = Should.NotThrow(collection.BuildProvider))
+                {
+                    provider.HasDependency<TestDisposable>().ShouldBeTrue();
+
+                    disposableA = Should.NotThrow(provider.GetDependency<TestDisposable>);
+                    disposableA.IsDisposed.ShouldBeFalse();
+                    disposableA.IntValue.ShouldBe(171);
+                    disposableA.StringValue.ShouldBe("Hello World");
+                }
+
+                disposableA.IsDisposed.ShouldBeTrue();
+                disposableB.IsDisposed.ShouldBeTrue();
             }
 
-            disposable.IsDisposed.ShouldBeTrue();
-
-            testDisposable.IsDisposed.ShouldBeTrue();
-
-            // repeat the test, but it should still be disposed of.
-            using(IDependencyProvider provider = dependencies.BuildProvider())
-            {
-                disposable = provider.GetDependency<TestDisposable>();
-                disposable.IsDisposed.ShouldBeTrue();
-
-                provider.TryGetDependency(out disposable).ShouldBeTrue();
-
-                disposable.IsDisposed.ShouldBeTrue();
-            }
+            disposableA.IsDisposed.ShouldBeTrue();
+            disposableB.IsDisposed.ShouldBeTrue();
         }
 
         [Fact]
-        public void AddDependencyInstanceDisposableUnbound()
+        public void ThrowDependencyNotFoundException()
         {
-            IDependencyCollection dependencies = new DependencyCollection();
+            using IDependencyCollection collection = new DependencyCollection();
 
-            TestDisposable testDisposable = new TestDisposable
-            {
-                IntValue = 34,
-                StringValue = "Hello"
-            };
+            using IDependencyProvider provider = Should.NotThrow(collection.BuildProvider);
 
-            dependencies.AddDependency(() => testDisposable, Binding.Unbound);
-
-            TestDisposable disposable;
-
-            using(IDependencyProvider provider = dependencies.BuildProvider())
-            {
-                disposable = provider.GetDependency<TestDisposable>();
-
-                disposable.IntValue.ShouldBe(34);
-                disposable.StringValue.ShouldBe("Hello");
-                disposable.IsDisposed.ShouldBeFalse();
-            }
-
-            disposable.IsDisposed.ShouldBeFalse();
-
-            disposable.Dispose();
-
-            disposable.IsDisposed.ShouldBeTrue();
-            testDisposable.IsDisposed.ShouldBeTrue();
-        }
-
-        [Fact]
-        public void GetDependencyException()
-        {
-            IDependencyCollection dependencies = new DependencyCollection();
-
-            using IDependencyProvider provider = dependencies.BuildProvider();
-
-            Should.Throw<DependencyNotFoundException>(() => provider.GetDependency<TestDisposable>());
-        }
-
-        [Fact]
-        public void TryGetDependencyNoResult()
-        {
-            IDependencyCollection dependencies = new DependencyCollection();
-
-            using IDependencyProvider provider = dependencies.BuildProvider();
-
-            bool result = provider.TryGetDependency(out TestDisposable disposable);
-
-            result.ShouldBeFalse();
-            disposable.ShouldBeNull();
+            Should.Throw<DependencyNotFoundException>(provider.GetDependency<TestDisposable>);
         }
     }
 }
