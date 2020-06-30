@@ -9,6 +9,13 @@
     <NeutralLanguage>en-AU</NeutralLanguage>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Description>Adds Dependency Collection/Provider, enabaling generic dependencies with lifetimes to be added. When a dependency is requested depending on its lifetime it will be instantiated and disposed of.</Description>
+    <Version>1.0.1.2-beta</Version>
+    <PackageIcon>nuget_icon.png</PackageIcon>
+    <PackageProjectUrl>https://github.com/armorall171/DeltaWare.Dependencies</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/armorall171/DeltaWare.Dependencies</RepositoryUrl>
+    <RepositoryType>GIT</RepositoryType>
+    <PackageTags>Dependencies; Collection; Generic</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,6 +24,10 @@
 
   <ItemGroup>
     <None Include="..\..\LICENSE.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="..\..\nuget_icon.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>

@@ -65,6 +65,8 @@ namespace DeltaWare.Dependencies
             return new DependencyProvider(_dependencies, _singletonInstances);
         }
 
+        #region IDisposable
+
         private volatile bool _disposed;
 
         public void Dispose()
@@ -94,5 +96,7 @@ namespace DeltaWare.Dependencies
 
             _disposed = true;
         }
+
+        #endregion
     }
 }

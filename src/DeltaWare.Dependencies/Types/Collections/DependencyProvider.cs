@@ -128,7 +128,7 @@ namespace DeltaWare.Dependencies
                 _disposableDependencies.Add(dependencyInstance);
             }
 
-            return dependencyInstance;
+            return dependencyInstance.Instance;
         }
 
         #region IDisposable

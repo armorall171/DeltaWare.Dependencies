@@ -28,6 +28,11 @@ namespace DeltaWare.Dependencies.Types
 
         public void Dispose()
         {
+            if (Binding != Binding.Bound)
+            {
+                return;
+            }
+
             Dispose(true);
 
             GC.SuppressFinalize(this);
@@ -40,7 +45,7 @@ namespace DeltaWare.Dependencies.Types
                 return;
             }
 
-            if(disposing && Binding == Binding.Bound && Instance is IDisposable disposableImplementation)
+            if(disposing && Instance is IDisposable disposableImplementation)
             {
                 disposableImplementation.Dispose();
             }

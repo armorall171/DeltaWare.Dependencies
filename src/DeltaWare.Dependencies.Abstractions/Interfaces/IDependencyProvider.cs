@@ -29,7 +29,6 @@ namespace DeltaWare.Dependencies
         /// Returns a <see cref="bool"/> specifying if the <see cref="IDependencyProvider"/> contains the specified type.
         /// </summary>
         /// <typeparam name="TDependency"></typeparam>
-        /// <returns></returns>
         bool HasDependency<TDependency>();
     }
 }
