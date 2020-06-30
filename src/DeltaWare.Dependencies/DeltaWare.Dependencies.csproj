@@ -16,6 +16,8 @@
     <RepositoryUrl>https://github.com/armorall171/DeltaWare.Dependencies</RepositoryUrl>
     <RepositoryType>GIT</RepositoryType>
     <PackageTags>Dependencies; Collection; Generic</PackageTags>
+      <IncludeSymbols>true</IncludeSymbols>
+      <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <ItemGroup>
