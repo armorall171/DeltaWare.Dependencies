@@ -3,6 +3,7 @@ using DeltaWare.Dependencies.Interfaces;
 using DeltaWare.Dependencies.Types;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 // ReSharper disable once CheckNamespace
 namespace DeltaWare.Dependencies
@@ -12,6 +13,15 @@ namespace DeltaWare.Dependencies
         private readonly Dictionary<Type, IDependencyDescriptor> _dependencies = new Dictionary<Type, IDependencyDescriptor>();
 
         private readonly Dictionary<Type, IDependencyInstance> _singletonInstances = new Dictionary<Type, IDependencyInstance>();
+
+        public DependencyCollection()
+        {
+        }
+
+        private DependencyCollection(Dictionary<Type, IDependencyDescriptor> dependencies)
+        {
+            _dependencies = dependencies;
+        }
 
         public void AddDependency<TDependency>(Func<TDependency> builder, Lifetime lifetime, Binding binding = Binding.Bound)
         {
@@ -63,6 +73,15 @@ namespace DeltaWare.Dependencies
         public IDependencyProvider BuildProvider()
         {
             return new DependencyProvider(_dependencies, _singletonInstances);
+        }
+
+        public IDependencyCollection Clone()
+        {
+            Dictionary<Type, IDependencyDescriptor> dependencies = _dependencies.Values
+                .Select(dependency => dependency.Clone())
+                .ToDictionary(clonedDependency => clonedDependency.Type);
+
+            return new DependencyCollection(dependencies);
         }
 
         #region IDisposable

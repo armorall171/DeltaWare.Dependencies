@@ -49,5 +49,15 @@ namespace DeltaWare.Dependencies.Types
 
             return instance;
         }
+
+        public IDependencyDescriptor Clone()
+        {
+            if(_builder != null)
+            {
+                return new DependencyDescriptor<TDependency>(_builder, Lifetime, Binding);
+            }
+
+            return new DependencyDescriptor<TDependency>(_providerBuilder, Lifetime, Binding);
+        }
     }
 }
