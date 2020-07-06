@@ -17,5 +17,7 @@ namespace DeltaWare.Dependencies
         bool HasDependency<TDependency>();
 
         IDependencyProvider BuildProvider();
+
+        IDependencyCollection Clone();
     }
 }

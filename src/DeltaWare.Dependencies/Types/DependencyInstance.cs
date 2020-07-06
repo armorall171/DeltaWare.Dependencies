@@ -28,7 +28,7 @@ namespace DeltaWare.Dependencies.Types
 
         public void Dispose()
         {
-            if (Binding != Binding.Bound)
+            if(Binding != Binding.Bound)
             {
                 return;
             }

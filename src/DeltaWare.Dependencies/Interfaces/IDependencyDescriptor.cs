@@ -21,5 +21,7 @@ namespace DeltaWare.Dependencies.Interfaces
         Type Type { get; }
 
         IDependencyInstance GetInstance(IDependencyProvider provider);
+
+        IDependencyDescriptor Clone();
     }
 }
