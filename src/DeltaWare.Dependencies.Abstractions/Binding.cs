@@ -1,7 +1,6 @@
 ﻿
 using System;
 
-// ReSharper disable once CheckNamespace
 namespace DeltaWare.Dependencies.Abstractions
 {
     /// <summary>

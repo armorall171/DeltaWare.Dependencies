@@ -3,25 +3,28 @@ using System;
 
 namespace DeltaWare.Dependencies.Interfaces
 {
+    /// <summary>
+    /// Represents an instance of a dependency.
+    /// </summary>
     public interface IDependencyInstance: IDisposable
     {
         /// <summary>
-        /// Specifies the <see cref="Binding"/> of the <see cref="IDependencyInstance"/>.
+        /// Specifies the binding of the dependency.
         /// </summary>
         Binding Binding { get; }
 
         /// <summary>
-        /// Specifies the <see cref="Lifetime"/> of the <see cref="IDependencyInstance"/>.
+        /// Specifies the lifetime of the dependency.
         /// </summary>
         Lifetime Lifetime { get; }
 
         /// <summary>
-        /// Specified the <see cref="Type"/> of the <see cref="IDependencyInstance"/>,
+        /// Specified the type of the dependency.
         /// </summary>
         Type Type { get; }
 
         /// <summary>
-        /// The current instance of the <see cref="IDependencyInstance"/>.
+        /// The instance of the dependency.
         /// </summary>
         object Instance { get; }
     }

@@ -1,13 +1,14 @@
 ﻿using DeltaWare.Dependencies.Abstractions;
-using DeltaWare.Dependencies.Exceptions;
+using DeltaWare.Dependencies.Abstractions.Exceptions;
 using DeltaWare.Dependencies.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
-// ReSharper disable once CheckNamespace
 namespace DeltaWare.Dependencies
 {
+    /// <inheritdoc cref="IDependencyProvider"/>
     public class DependencyProvider: IDependencyProvider
     {
         private readonly Dictionary<Type, IDependencyDescriptor> _dependencies;
@@ -23,12 +24,14 @@ namespace DeltaWare.Dependencies
         /// </summary>
         /// <param name="dependencies">The collection of dependencies this provider has control over.</param>
         /// <param name="singletonInstances">The singleton instances the <see cref="DependencyCollection"/> has control over.</param>
-        internal DependencyProvider(Dictionary<Type, IDependencyDescriptor> dependencies, Dictionary<Type, IDependencyInstance> singletonInstances)
+        /// <exception cref="ArgumentNullException">Thrown when a null value is provided.</exception>
+        public DependencyProvider([NotNull] Dictionary<Type, IDependencyDescriptor> dependencies, [NotNull] Dictionary<Type, IDependencyInstance> singletonInstances)
         {
-            _dependencies = dependencies;
-            _singletonInstances = singletonInstances;
+            _dependencies = dependencies ?? throw new ArgumentNullException(nameof(dependencies));
+            _singletonInstances = singletonInstances ?? throw new ArgumentNullException(nameof(singletonInstances));
         }
 
+        /// <inheritdoc cref="IDependencyProvider.GetDependency{TDependency}"/>
         public TDependency GetDependency<TDependency>()
         {
             Type dependencyType = typeof(TDependency);
@@ -46,6 +49,7 @@ namespace DeltaWare.Dependencies
             return InstantiateDependency<TDependency>();
         }
 
+        /// <inheritdoc cref="IDependencyProvider.GetDependencies{TDependency}"/>
         public List<TDependency> GetDependencies<TDependency>()
         {
             // Get all registered dependencies that inherit the specified type.
@@ -74,6 +78,7 @@ namespace DeltaWare.Dependencies
             return dependencies;
         }
 
+        /// <inheritdoc cref="IDependencyProvider.TryGetDependency{TDependency}"/>
         public bool TryGetDependency<TDependency>(out TDependency dependencyInstance)
         {
             if(!HasDependency<TDependency>())
@@ -88,17 +93,26 @@ namespace DeltaWare.Dependencies
             return true;
         }
 
+        /// <inheritdoc cref="IDependencyProvider.HasDependency{TDependency}"/>
         public bool HasDependency<TDependency>()
         {
             return _dependencies.ContainsKey(typeof(TDependency));
         }
 
+        /// <summary>
+        /// Instantiates a new instance of the specified dependency.
+        /// </summary>
+        /// <typeparam name="TDependency">The dependency to be instantiated.</typeparam>
         public TDependency InstantiateDependency<TDependency>()
         {
             return (TDependency)InstantiateDependency(typeof(TDependency));
         }
 
-        public virtual object InstantiateDependency(Type dependencyType)
+        /// <summary>
+        /// Instantiates a new instance of the specified dependency.
+        /// </summary>
+        /// <param name="dependencyType">The dependency type to be instantiated.</param>
+        public object InstantiateDependency(Type dependencyType)
         {
             if(!_dependencies.TryGetValue(dependencyType, out IDependencyDescriptor dependency))
             {
@@ -135,6 +149,7 @@ namespace DeltaWare.Dependencies
 
         private volatile bool _disposed;
 
+        /// <inheritdoc cref="IDisposable.Dispose"/>
         public void Dispose()
         {
             Dispose(true);
@@ -142,6 +157,9 @@ namespace DeltaWare.Dependencies
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Disposes all bound instances of scoped dependencies.
+        /// </summary>
         protected virtual void Dispose(bool disposing)
         {
             if(_disposed)

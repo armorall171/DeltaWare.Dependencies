@@ -1,4 +1,5 @@
-﻿using DeltaWare.Dependencies.Exceptions;
+﻿using DeltaWare.Dependencies.Abstractions;
+using DeltaWare.Dependencies.Abstractions.Exceptions;
 using Shouldly;
 using Xunit;
 

@@ -1,63 +1,78 @@
 ﻿using DeltaWare.Dependencies.Abstractions;
 using DeltaWare.Dependencies.Interfaces;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DeltaWare.Dependencies.Types
 {
-    internal class DependencyDescriptor<TDependency>: IDependencyDescriptor
+    /// <inheritdoc cref="IDependencyDescriptor"/>
+    public class DependencyDescriptor<TDependency>: IDependencyDescriptor where TDependency : class
     {
-        private readonly Func<TDependency> _builder = null;
+        private readonly Func<TDependency> _dependency;
 
-        private readonly Func<IDependencyProvider, TDependency> _providerBuilder = null;
+        private readonly Func<IDependencyProvider, TDependency> _providerDependency;
 
+        /// <inheritdoc cref="IDependencyDescriptor.Binding"/>
         public Binding Binding { get; }
 
+        /// <inheritdoc cref="IDependencyDescriptor.Lifetime"/>
         public Lifetime Lifetime { get; }
 
+        /// <inheritdoc cref="IDependencyDescriptor.Type"/>
         public Type Type => typeof(TDependency);
 
-        public DependencyDescriptor(Func<TDependency> builder, Lifetime lifetime, Binding binding)
+        /// <summary>
+        /// Creates a new instance of <see cref="DependencyDescriptor{TDependency}"/>.
+        /// </summary>
+        /// <param name="dependency">Specifies how to instantiate the dependency.</param>
+        /// <param name="lifetime">Specifies the lifetime of the dependency.</param>
+        /// <param name="binding">Specifies the binding of a dependency.</param>
+        /// <exception cref="ArgumentNullException">Thrown when a null value is provided.</exception>
+        public DependencyDescriptor([NotNull] Func<TDependency> dependency, Lifetime lifetime, Binding binding = Binding.Bound)
         {
-            _builder = builder;
+            _dependency = dependency ?? throw new ArgumentNullException(nameof(dependency));
             Binding = binding;
             Lifetime = lifetime;
         }
 
-        public DependencyDescriptor(Func<IDependencyProvider, TDependency> builder, Lifetime lifetime, Binding binding)
+        /// <summary>
+        /// Creates a new instance of <see cref="DependencyDescriptor{TDependency}"/>.
+        /// </summary>
+        /// <param name="dependency">Specifies how to instantiate the dependency, including a provider to get existing dependencies.</param>
+        /// <param name="lifetime">Specifies the lifetime of the dependency.</param>
+        /// <param name="binding">Specifies the binding of a dependency.</param>
+        /// <exception cref="ArgumentNullException">Thrown when a null value is provided.</exception>
+        public DependencyDescriptor([NotNull] Func<IDependencyProvider, TDependency> dependency, Lifetime lifetime, Binding binding = Binding.Bound)
         {
-            _providerBuilder = builder;
+            _providerDependency = dependency ?? throw new ArgumentNullException(nameof(dependency));
             Binding = binding;
             Lifetime = lifetime;
         }
 
-        public IDependencyInstance GetInstance(IDependencyProvider provider)
+        /// <inheritdoc cref="IDependencyDescriptor.GetInstance"/>
+        public IDependencyInstance GetInstance([NotNull] IDependencyProvider provider)
         {
+            if(provider == null)
+            {
+                throw new ArgumentNullException(nameof(provider));
+            }
+
             IDependencyInstance instance;
 
-            if(_builder != null)
+            if(_dependency != null)
             {
-                instance = new DependencyInstance(_builder.Invoke(), Type, Lifetime, Binding);
+                instance = new DependencyInstance(_dependency.Invoke(), Type, Lifetime, Binding);
             }
-            else if(_providerBuilder != null)
+            else if(_providerDependency != null)
             {
-                instance = new DependencyInstance(_providerBuilder.Invoke(provider), Type, Lifetime, Binding);
+                instance = new DependencyInstance(_providerDependency.Invoke(provider), Type, Lifetime, Binding);
             }
             else
             {
-                throw new ArgumentNullException();
+                throw new NullReferenceException("No instance could be found.");
             }
 
             return instance;
-        }
-
-        public IDependencyDescriptor Clone()
-        {
-            if(_builder != null)
-            {
-                return new DependencyDescriptor<TDependency>(_builder, Lifetime, Binding);
-            }
-
-            return new DependencyDescriptor<TDependency>(_providerBuilder, Lifetime, Binding);
         }
     }
 }
