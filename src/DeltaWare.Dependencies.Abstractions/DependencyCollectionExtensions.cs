@@ -12,7 +12,7 @@ namespace DeltaWare.Dependencies.Abstractions
         /// <param name="dependency">Specifies how to instantiate the dependency, including a provider to get existing dependencies.</param>
         /// <param name="binding">Specifies the binding of a dependency.</param>
         /// <exception cref="ArgumentNullException">Thrown when a null value is provided.</exception>
-        public static void AddSingleton<TDependency>([NotNull] this IDependencyCollection collection, [NotNull] Func<TDependency> dependency, Binding binding = Binding.Bound) where TDependency : class
+        public static void AddSingleton<TDependency>([NotNull] this IDependencyCollection collection, [NotNull] Func<TDependency> dependency, Binding binding = Binding.Bound)
         {
             if(collection == null)
             {
@@ -29,7 +29,7 @@ namespace DeltaWare.Dependencies.Abstractions
         /// <param name="dependency">Specifies the dependency whilst supplying a provided to get an existing dependency.</param>
         /// <param name="binding">Specifies the binding of a dependency.</param>
         /// <exception cref="ArgumentNullException">Thrown when a null value is provided.</exception>
-        public static void AddSingleton<TDependency>([NotNull] this IDependencyCollection collection, [NotNull] Func<IDependencyProvider, TDependency> dependency, Binding binding = Binding.Bound) where TDependency : class
+        public static void AddSingleton<TDependency>([NotNull] this IDependencyCollection collection, [NotNull] Func<IDependencyProvider, TDependency> dependency, Binding binding = Binding.Bound)
         {
             if(collection == null)
             {
@@ -47,7 +47,7 @@ namespace DeltaWare.Dependencies.Abstractions
         /// <param name="binding">Specifies the binding of a dependency.</param>
         /// <exception cref="ArgumentNullException">Thrown when a null value is provided.</exception>
         /// <remarks>Only adds the dependency if no pre-existing instances are found.</remarks>
-        public static bool TryAddSingleton<TDependency>([NotNull] this IDependencyCollection collection, [NotNull] Func<TDependency> dependency, Binding binding = Binding.Bound) where TDependency : class
+        public static bool TryAddSingleton<TDependency>([NotNull] this IDependencyCollection collection, [NotNull] Func<TDependency> dependency, Binding binding = Binding.Bound)
         {
             if(collection == null)
             {
@@ -65,7 +65,7 @@ namespace DeltaWare.Dependencies.Abstractions
         /// <param name="binding">Specifies the binding of a dependency.</param>
         /// <exception cref="ArgumentNullException">Thrown when a null value is provided.</exception>
         /// <remarks>Only adds the dependency if no pre-existing instances are found.</remarks>
-        public static bool TryAddSingleton<TDependency>([NotNull] this IDependencyCollection collection, [NotNull] Func<IDependencyProvider, TDependency> dependency, Binding binding = Binding.Bound) where TDependency : class
+        public static bool TryAddSingleton<TDependency>([NotNull] this IDependencyCollection collection, [NotNull] Func<IDependencyProvider, TDependency> dependency, Binding binding = Binding.Bound)
         {
             if(collection == null)
             {
@@ -82,7 +82,7 @@ namespace DeltaWare.Dependencies.Abstractions
         /// <param name="dependency">Specifies how to instantiate the dependency, including a provider to get existing dependencies.</param>
         /// <param name="binding">Specifies the binding of a dependency.</param>
         /// <exception cref="ArgumentNullException">Thrown when a null value is provided.</exception>
-        public static void AddScoped<TDependency>([NotNull] this IDependencyCollection collection, [NotNull] Func<TDependency> dependency, Binding binding = Binding.Bound) where TDependency : class
+        public static void AddScoped<TDependency>([NotNull] this IDependencyCollection collection, [NotNull] Func<TDependency> dependency, Binding binding = Binding.Bound)
         {
             if(collection == null)
             {
@@ -99,7 +99,7 @@ namespace DeltaWare.Dependencies.Abstractions
         /// <param name="dependency">Specifies the dependency whilst supplying a provided to get an existing dependency.</param>
         /// <param name="binding">Specifies the binding of a dependency.</param>
         /// <exception cref="ArgumentNullException">Thrown when a null value is provided.</exception>
-        public static void AddScoped<TDependency>([NotNull] this IDependencyCollection collection, [NotNull] Func<IDependencyProvider, TDependency> dependency, Binding binding = Binding.Bound) where TDependency : class
+        public static void AddScoped<TDependency>([NotNull] this IDependencyCollection collection, [NotNull] Func<IDependencyProvider, TDependency> dependency, Binding binding = Binding.Bound)
         {
             if(collection == null)
             {
@@ -117,7 +117,7 @@ namespace DeltaWare.Dependencies.Abstractions
         /// <param name="binding">Specifies the binding of a dependency.</param>
         /// <exception cref="ArgumentNullException">Thrown when a null value is provided.</exception>
         /// <remarks>Only adds the dependency if no pre-existing instances are found.</remarks>
-        public static bool TryAddScoped<TDependency>([NotNull] this IDependencyCollection collection, [NotNull] Func<TDependency> dependency, Binding binding = Binding.Bound) where TDependency : class
+        public static bool TryAddScoped<TDependency>([NotNull] this IDependencyCollection collection, [NotNull] Func<TDependency> dependency, Binding binding = Binding.Bound)
         {
             if(collection == null)
             {
@@ -135,7 +135,7 @@ namespace DeltaWare.Dependencies.Abstractions
         /// <param name="binding">Specifies the binding of a dependency.</param>
         /// <exception cref="ArgumentNullException">Thrown when a null value is provided.</exception>
         /// <remarks>Only adds the dependency if no pre-existing instances are found.</remarks>
-        public static bool TryAddScoped<TDependency>([NotNull] this IDependencyCollection collection, [NotNull] Func<IDependencyProvider, TDependency> dependency, Binding binding = Binding.Bound) where TDependency : class
+        public static bool TryAddScoped<TDependency>([NotNull] this IDependencyCollection collection, [NotNull] Func<IDependencyProvider, TDependency> dependency, Binding binding = Binding.Bound)
         {
             if(collection == null)
             {
@@ -152,7 +152,7 @@ namespace DeltaWare.Dependencies.Abstractions
         /// <param name="dependency">Specifies how to instantiate the dependency, including a provider to get existing dependencies.</param>
         /// <param name="binding">Specifies the binding of a dependency.</param>
         /// <exception cref="ArgumentNullException">Thrown when a null value is provided.</exception>
-        public static void AddTransient<TDependency>([NotNull] this IDependencyCollection collection, [NotNull] Func<TDependency> dependency, Binding binding = Binding.Bound) where TDependency : class
+        public static void AddTransient<TDependency>([NotNull] this IDependencyCollection collection, [NotNull] Func<TDependency> dependency, Binding binding = Binding.Bound)
         {
             if(collection == null)
             {
@@ -169,7 +169,7 @@ namespace DeltaWare.Dependencies.Abstractions
         /// <param name="dependency">Specifies the dependency whilst supplying a provided to get an existing dependency.</param>
         /// <param name="binding">Specifies the binding of a dependency.</param>
         /// <exception cref="ArgumentNullException">Thrown when a null value is provided.</exception>
-        public static void AddTransient<TDependency>([NotNull] this IDependencyCollection collection, [NotNull] Func<IDependencyProvider, TDependency> dependency, Binding binding = Binding.Bound) where TDependency : class
+        public static void AddTransient<TDependency>([NotNull] this IDependencyCollection collection, [NotNull] Func<IDependencyProvider, TDependency> dependency, Binding binding = Binding.Bound)
         {
             if(collection == null)
             {
@@ -187,7 +187,7 @@ namespace DeltaWare.Dependencies.Abstractions
         /// <param name="binding">Specifies the binding of a dependency.</param>
         /// <exception cref="ArgumentNullException">Thrown when a null value is provided.</exception>
         /// <remarks>Only adds the dependency if no pre-existing instances are found.</remarks>
-        public static bool TryAddTransient<TDependency>([NotNull] this IDependencyCollection collection, [NotNull] Func<TDependency> dependency, Binding binding = Binding.Bound) where TDependency : class
+        public static bool TryAddTransient<TDependency>([NotNull] this IDependencyCollection collection, [NotNull] Func<TDependency> dependency, Binding binding = Binding.Bound)
         {
             if(collection == null)
             {
@@ -205,7 +205,7 @@ namespace DeltaWare.Dependencies.Abstractions
         /// <param name="binding">Specifies the binding of a dependency.</param>
         /// <exception cref="ArgumentNullException">Thrown when a null value is provided.</exception>
         /// <remarks>Only adds the dependency if no pre-existing instances are found.</remarks>
-        public static bool TryAddTransient<TDependency>([NotNull] this IDependencyCollection collection, [NotNull] Func<IDependencyProvider, TDependency> dependency, Binding binding = Binding.Bound) where TDependency : class
+        public static bool TryAddTransient<TDependency>([NotNull] this IDependencyCollection collection, [NotNull] Func<IDependencyProvider, TDependency> dependency, Binding binding = Binding.Bound)
         {
             if(collection == null)
             {

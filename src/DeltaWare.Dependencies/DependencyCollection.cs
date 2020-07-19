@@ -22,7 +22,7 @@ namespace DeltaWare.Dependencies
         }
 
         /// <inheritdoc cref="IDependencyCollection.AddDependency{TDependency}(Func{TDependency}, Lifetime, Binding)"/>
-        public void AddDependency<TDependency>([NotNull] Func<TDependency> dependency, Lifetime lifetime, Binding binding = Binding.Bound) where TDependency : class
+        public void AddDependency<TDependency>([NotNull] Func<TDependency> dependency, Lifetime lifetime, Binding binding = Binding.Bound)
         {
             if(dependency == null)
             {
@@ -40,7 +40,7 @@ namespace DeltaWare.Dependencies
         }
 
         /// <inheritdoc cref="IDependencyCollection.AddDependency{TDependency}(Func{IDependencyProvider, TDependency}, Lifetime, Binding)"/>
-        public void AddDependency<TDependency>([NotNull] Func<IDependencyProvider, TDependency> dependency, Lifetime lifetime, Binding binding = Binding.Bound) where TDependency : class
+        public void AddDependency<TDependency>([NotNull] Func<IDependencyProvider, TDependency> dependency, Lifetime lifetime, Binding binding = Binding.Bound)
         {
             if(dependency == null)
             {
@@ -58,7 +58,7 @@ namespace DeltaWare.Dependencies
         }
 
         /// <inheritdoc cref="IDependencyCollection.TryAddDependency{TDependency}(Func{TDependency}, Lifetime, Binding)"/>
-        public bool TryAddDependency<TDependency>([NotNull] Func<TDependency> dependency, Lifetime lifetime, Binding binding = Binding.Bound) where TDependency : class
+        public bool TryAddDependency<TDependency>([NotNull] Func<TDependency> dependency, Lifetime lifetime, Binding binding = Binding.Bound)
         {
             if(dependency == null)
             {
@@ -73,7 +73,7 @@ namespace DeltaWare.Dependencies
         }
 
         /// <inheritdoc cref="IDependencyCollection.TryAddDependency{TDependency}(Func{IDependencyProvider, TDependency}, Lifetime, Binding)"/>
-        public bool TryAddDependency<TDependency>([NotNull] Func<IDependencyProvider, TDependency> dependency, Lifetime lifetime, Binding binding = Binding.Bound) where TDependency : class
+        public bool TryAddDependency<TDependency>([NotNull] Func<IDependencyProvider, TDependency> dependency, Lifetime lifetime, Binding binding = Binding.Bound)
         {
             if(dependency == null)
             {

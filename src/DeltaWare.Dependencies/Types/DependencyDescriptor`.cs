@@ -6,7 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace DeltaWare.Dependencies.Types
 {
     /// <inheritdoc cref="IDependencyDescriptor"/>
-    public class DependencyDescriptor<TDependency>: IDependencyDescriptor where TDependency : class
+    public class DependencyDescriptor<TDependency>: IDependencyDescriptor
     {
         private readonly Func<TDependency> _dependency;
 
