@@ -136,7 +136,7 @@ namespace DeltaWare.Dependencies
                 _scopedInstances.Add(dependencyType, dependencyInstance);
             }
 
-            if(dependencyType.GetInterfaces().Contains(typeof(IDisposable)))
+            if(dependencyInstance.Instance.GetType().GetInterfaces().Contains(typeof(IDisposable)))
             {
                 // Track all disposable dependencies.
                 _disposableDependencies.Add(dependencyInstance);
