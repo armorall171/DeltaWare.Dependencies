@@ -1,9 +1,11 @@
 ﻿using DeltaWare.Dependencies.Abstractions;
+using DeltaWare.Dependencies.Abstractions.Exceptions;
 using DeltaWare.Dependencies.Interfaces;
 using DeltaWare.Dependencies.Types;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace DeltaWare.Dependencies
 {
@@ -13,6 +15,8 @@ namespace DeltaWare.Dependencies
         private readonly Dictionary<Type, IDependencyDescriptor> _dependencies = new Dictionary<Type, IDependencyDescriptor>();
 
         private readonly Dictionary<Type, IDependencyInstance> _singletonInstances = new Dictionary<Type, IDependencyInstance>();
+
+        private readonly object _scopeLock = new object();
 
         /// <summary>
         /// Creates a new instance of <see cref="DependencyCollection"/>.
@@ -93,10 +97,47 @@ namespace DeltaWare.Dependencies
             return _dependencies.ContainsKey(typeof(TDependency));
         }
 
+        public IDependencyDescriptor GetDependencyDescriptor<TDependency>()
+        {
+            Type dependencyType = typeof(TDependency);
+
+            if(_dependencies.TryGetValue(dependencyType, out IDependencyDescriptor descriptor))
+            {
+                return descriptor;
+            }
+
+            throw new DependencyNotFoundException(dependencyType);
+        }
+
+        public List<IDependencyDescriptor> GetDependencyDescriptors<TDependency>()
+        {
+            return _dependencies
+                .Where(d => d.Key.GetInterfaces().Contains(typeof(TDependency)))
+                .Select(d => d.Value)
+                .ToList();
+        }
+
+        public IDependencyInstance GetSingletonInstance(IDependencyDescriptor descriptor, IDependencyProvider provider)
+        {
+            lock(_scopeLock)
+            {
+                if(_singletonInstances.TryGetValue(descriptor.Type, out IDependencyInstance instance))
+                {
+                    return instance;
+                }
+
+                instance = descriptor.GetInstance(provider);
+
+                _singletonInstances.Add(descriptor.Type, instance);
+
+                return instance;
+            }
+        }
+
         /// <inheritdoc cref="IDependencyCollection.BuildProvider"/>
         public IDependencyProvider BuildProvider()
         {
-            return new DependencyProvider(_dependencies, _singletonInstances);
+            return new DependencyProvider(this);
         }
 
         #region IDisposable
@@ -123,11 +164,14 @@ namespace DeltaWare.Dependencies
 
             if(disposing)
             {
-                foreach(IDependencyInstance dependencyInstance in _singletonInstances.Values)
+                lock(_scopeLock)
                 {
-                    if(dependencyInstance.Instance is IDisposable disposable)
+                    foreach(IDependencyInstance dependencyInstance in _singletonInstances.Values)
                     {
-                        disposable.Dispose();
+                        if(dependencyInstance.Instance is IDisposable disposable)
+                        {
+                            disposable.Dispose();
+                        }
                     }
                 }
             }
