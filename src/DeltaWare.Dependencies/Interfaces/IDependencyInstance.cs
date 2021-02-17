@@ -27,5 +27,7 @@ namespace DeltaWare.Dependencies.Interfaces
         /// The instance of the dependency.
         /// </summary>
         object Instance { get; }
+
+        public bool IsDisposable { get; }
     }
 }

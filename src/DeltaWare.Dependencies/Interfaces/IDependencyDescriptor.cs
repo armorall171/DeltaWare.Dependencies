@@ -24,8 +24,6 @@ namespace DeltaWare.Dependencies.Interfaces
         /// </summary>
         Type Type { get; }
 
-        bool IsDisposableType { get; }
-
         /// <summary>
         /// Gets an instance of the dependency.
         /// </summary>

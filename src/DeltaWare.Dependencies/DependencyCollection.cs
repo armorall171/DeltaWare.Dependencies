@@ -61,6 +61,18 @@ namespace DeltaWare.Dependencies
             }
         }
 
+        public void AddDependency<TDependency, TImplementation>(Lifetime lifetime, Binding binding = Binding.Bound)
+        {
+            Type dependencyType = typeof(TDependency);
+
+            IDependencyDescriptor dependencyDescriptor = new DependencyDescriptor<TDependency, TImplementation>(lifetime, binding);
+
+            if(!_dependencies.TryAdd(dependencyType, dependencyDescriptor))
+            {
+                _dependencies[dependencyType] = dependencyDescriptor;
+            }
+        }
+
         /// <inheritdoc cref="IDependencyCollection.TryAddDependency{TDependency}(Func{TDependency}, Lifetime, Binding)"/>
         public bool TryAddDependency<TDependency>([NotNull] Func<TDependency> dependency, Lifetime lifetime, Binding binding = Binding.Bound)
         {
@@ -91,16 +103,33 @@ namespace DeltaWare.Dependencies
             return _dependencies.TryAdd(dependencyType, dependencyDescriptor);
         }
 
+        public bool TryAddDependency<TDependency, TImplementation>(Lifetime lifetime, Binding binding = Binding.Bound)
+        {
+            Type dependencyType = typeof(TDependency);
+
+            IDependencyDescriptor dependencyDescriptor = new DependencyDescriptor<TDependency, TImplementation>(lifetime, binding);
+
+            return _dependencies.TryAdd(dependencyType, dependencyDescriptor);
+        }
+
         /// <inheritdoc cref="IDependencyCollection.HasDependency{TDependency}"/>
         public bool HasDependency<TDependency>()
         {
-            return _dependencies.ContainsKey(typeof(TDependency));
+            return HasDependency(typeof(TDependency));
+        }
+        
+        public bool HasDependency(Type dependencyType)
+        {
+            return _dependencies.ContainsKey(dependencyType);
         }
 
         public IDependencyDescriptor GetDependencyDescriptor<TDependency>()
         {
-            Type dependencyType = typeof(TDependency);
+            return GetDependencyDescriptor(typeof(TDependency));
+        }
 
+        public IDependencyDescriptor GetDependencyDescriptor(Type dependencyType)
+        {
             if(_dependencies.TryGetValue(dependencyType, out IDependencyDescriptor descriptor))
             {
                 return descriptor;

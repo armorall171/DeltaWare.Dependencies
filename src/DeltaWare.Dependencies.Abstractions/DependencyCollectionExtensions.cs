@@ -39,6 +39,16 @@ namespace DeltaWare.Dependencies.Abstractions
             collection.AddDependency(dependency, Lifetime.Singleton, binding);
         }
 
+        public static void AddSingleton<TDependency, TImplementation>([NotNull] this IDependencyCollection collection, Binding binding = Binding.Bound)
+        {
+            if(collection == null)
+            {
+                throw new ArgumentNullException(nameof(collection));
+            }
+
+            collection.AddDependency<TDependency, TImplementation>(Lifetime.Singleton, binding);
+        }
+
         /// <summary>
         /// Adds the specified dependency as a singleton instance. Returns a <see cref="bool"/> specifying if the instance was added.
         /// </summary>
@@ -75,6 +85,16 @@ namespace DeltaWare.Dependencies.Abstractions
             return collection.TryAddDependency(dependency, Lifetime.Singleton, binding);
         }
 
+        public static bool TryAddSingleton<TDependency, TImplementation>([NotNull] this IDependencyCollection collection, Binding binding = Binding.Bound)
+        {
+            if(collection == null)
+            {
+                throw new ArgumentNullException(nameof(collection));
+            }
+
+            return collection.TryAddDependency<TDependency, TImplementation>(Lifetime.Singleton, binding);
+        }
+
         /// <summary>
         /// Adds the specified dependency as a scoped instance. Overrides existing instances.
         /// </summary>
@@ -107,6 +127,16 @@ namespace DeltaWare.Dependencies.Abstractions
             }
 
             collection.AddDependency(dependency, Lifetime.Scoped, binding);
+        }
+
+        public static void AddScoped<TDependency, TImplementation>([NotNull] this IDependencyCollection collection, Binding binding = Binding.Bound)
+        {
+            if(collection == null)
+            {
+                throw new ArgumentNullException(nameof(collection));
+            }
+
+            collection.AddDependency<TDependency, TImplementation>(Lifetime.Scoped, binding);
         }
 
         /// <summary>
@@ -145,6 +175,16 @@ namespace DeltaWare.Dependencies.Abstractions
             return collection.TryAddDependency(dependency, Lifetime.Scoped, binding);
         }
 
+        public static bool TryAddScoped<TDependency, TImplementation>([NotNull] this IDependencyCollection collection, Binding binding = Binding.Bound)
+        {
+            if(collection == null)
+            {
+                throw new ArgumentNullException(nameof(collection));
+            }
+
+            return collection.TryAddDependency<TDependency, TImplementation>(Lifetime.Scoped, binding);
+        }
+
         /// <summary>
         /// Adds the specified dependency as a transient instance. Overrides existing instances.
         /// </summary>
@@ -177,6 +217,16 @@ namespace DeltaWare.Dependencies.Abstractions
             }
 
             collection.AddDependency(dependency, Lifetime.Transient, binding);
+        }
+
+        public static void AddTransient<TDependency, TImplementation>([NotNull] this IDependencyCollection collection, Binding binding = Binding.Bound)
+        {
+            if(collection == null)
+            {
+                throw new ArgumentNullException(nameof(collection));
+            }
+
+            collection.AddDependency<TDependency, TImplementation>(Lifetime.Transient, binding);
         }
 
         /// <summary>
@@ -213,6 +263,16 @@ namespace DeltaWare.Dependencies.Abstractions
             }
 
             return collection.TryAddDependency(dependency, Lifetime.Transient, binding);
+        }
+
+        public static bool TryAddTransient<TDependency, TImplementation>([NotNull] this IDependencyCollection collection, Binding binding = Binding.Bound)
+        {
+            if(collection == null)
+            {
+                throw new ArgumentNullException(nameof(collection));
+            }
+
+            return collection.TryAddDependency<TDependency, TImplementation>(Lifetime.Transient, binding);
         }
     }
 }

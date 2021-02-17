@@ -23,12 +23,15 @@ namespace DeltaWare.Dependencies.Abstractions
         /// <remarks>Searches for dependencies based off of their inheritance.</remarks>
         List<TDependency> GetDependencies<TDependency>();
 
+        object GetDependency(Type dependencyType);
+
         /// <summary>
         /// Tries to get an instance of the specified dependency. Returns a <see cref="bool"/> specifying if the dependency was found.
         /// </summary>
         /// <typeparam name="TDependency">The dependency instance to be retrieved.</typeparam>
         /// <param name="dependencyInstance">The retrieved instance of the dependency.</param>
         bool TryGetDependency<TDependency>(out TDependency dependencyInstance);
+        bool TryGetDependency(Type dependencyType, out object dependencyInstance);
 
         /// <summary>
         /// Returns a <see cref="bool"/> specifying if the dependency was found.

@@ -2,6 +2,7 @@
 using DeltaWare.Dependencies.Interfaces;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace DeltaWare.Dependencies.Types
 {
@@ -20,6 +21,8 @@ namespace DeltaWare.Dependencies.Types
         /// <inheritdoc cref="IDependencyInstance.Instance"/>
         public object Instance { get; }
 
+        public bool IsDisposable { get; }
+
         /// <summary>
         /// Creates a new instance of <see cref="DependencyInstance"/>.
         /// </summary>
@@ -33,6 +36,7 @@ namespace DeltaWare.Dependencies.Types
             Instance = instance ?? throw new ArgumentNullException(nameof(instance));
             Binding = binding;
             Lifetime = lifetime;
+            IsDisposable = instance.GetType().GetInterfaces().Contains(typeof(IDisposable));
         }
 
         #region IDisposable

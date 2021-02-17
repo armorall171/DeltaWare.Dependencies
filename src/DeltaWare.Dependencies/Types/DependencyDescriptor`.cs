@@ -3,6 +3,7 @@ using DeltaWare.Dependencies.Interfaces;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Reflection;
 
 namespace DeltaWare.Dependencies.Types
 {
@@ -20,9 +21,7 @@ namespace DeltaWare.Dependencies.Types
         public Lifetime Lifetime { get; }
 
         /// <inheritdoc cref="IDependencyDescriptor.Type"/>
-        public Type Type => typeof(TDependency);
-
-        public bool IsDisposableType { get; }
+        public Type Type { get; } = typeof(TDependency);
 
         /// <summary>
         /// Creates a new instance of <see cref="DependencyDescriptor{TDependency}"/>.
@@ -36,7 +35,6 @@ namespace DeltaWare.Dependencies.Types
             _dependency = dependency ?? throw new ArgumentNullException(nameof(dependency));
             Binding = binding;
             Lifetime = lifetime;
-            IsDisposableType = typeof(TDependency).GetInterfaces().Contains(typeof(IDisposable));
         }
 
         /// <summary>
@@ -77,6 +75,55 @@ namespace DeltaWare.Dependencies.Types
             }
 
             return instance;
+        }
+    }
+
+    public class DependencyDescriptor<TDependency, TImplementation>: IDependencyDescriptor
+    {
+        /// <inheritdoc cref="IDependencyDescriptor.Binding"/>
+        public Binding Binding { get; }
+
+        /// <inheritdoc cref="IDependencyDescriptor.Lifetime"/>
+        public Lifetime Lifetime { get; }
+
+        /// <inheritdoc cref="IDependencyDescriptor.Type"/>
+        public Type Type { get; } = typeof(TDependency);
+
+        /// <summary>
+        /// Creates a new instance of <see cref="DependencyDescriptor{TDependency, TImplementation}"/>.
+        /// </summary>
+        /// <param name="lifetime">Specifies the lifetime of the dependency.</param>
+        /// <param name="binding">Specifies the binding of a dependency.</param>
+        /// <exception cref="ArgumentNullException">Thrown when a null value is provided.</exception>
+        public DependencyDescriptor(Lifetime lifetime, Binding binding = Binding.Bound)
+        {
+            Binding = binding;
+            Lifetime = lifetime;
+        }
+
+        public IDependencyInstance GetInstance(IDependencyProvider provider)
+        {
+            ConstructorInfo[] constructs = typeof(TImplementation).GetConstructors();
+
+            if(constructs.Length > 1)
+            {
+                throw new ArgumentException("Multiple constructs found, only one may exist.");
+            }
+
+            ConstructorInfo constructor = constructs.First();
+
+            ParameterInfo[] parameters = constructor.GetParameters();
+
+            object[] arguments = new object[parameters.Length];
+
+            for(int i = 0; i < parameters.Length; i++)
+            {
+                arguments[i] = provider.GetDependency(parameters[i].ParameterType);
+            }
+
+            object instance = (TDependency)Activator.CreateInstance(typeof(TImplementation), arguments);
+
+            return new DependencyInstance(instance, Type, Lifetime, Binding);
         }
     }
 }

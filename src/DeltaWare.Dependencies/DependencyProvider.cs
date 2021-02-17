@@ -30,6 +30,13 @@ namespace DeltaWare.Dependencies
             return (TDependency)GetDependency(descriptor);
         }
 
+        public object GetDependency(Type dependencyType)
+        {
+            IDependencyDescriptor descriptor = _sourceCollection.GetDependencyDescriptor(dependencyType);
+
+            return GetDependency(descriptor);
+        }
+
         /// <inheritdoc cref="IDependencyProvider.GetDependencies{TDependency}"/>
         public List<TDependency> GetDependencies<TDependency>()
         {
@@ -67,7 +74,7 @@ namespace DeltaWare.Dependencies
                     _scopedInstances.Add(descriptor.Type, instance);
                 }
 
-                if(descriptor.IsDisposableType)
+                if(instance.IsDisposable)
                 {
                     // Track all disposable dependencies.
                     _disposableDependencies.Add(instance);
@@ -92,10 +99,29 @@ namespace DeltaWare.Dependencies
             return true;
         }
 
+        public bool TryGetDependency(Type dependencyType, out object dependencyInstance)
+        {
+            if (HasDependency(dependencyType))
+            {
+                dependencyInstance = default;
+
+                return false;
+            }
+
+            dependencyInstance = GetDependency(dependencyType);
+
+            return true;
+        }
+
         /// <inheritdoc cref="IDependencyProvider.HasDependency{TDependency}"/>
         public bool HasDependency<TDependency>()
         {
             return _sourceCollection.HasDependency<TDependency>();
+        }
+        
+        public bool HasDependency(Type dependencyType)
+        {
+            return _sourceCollection.HasDependency(dependencyType);
         }
 
         #region IDisposable
