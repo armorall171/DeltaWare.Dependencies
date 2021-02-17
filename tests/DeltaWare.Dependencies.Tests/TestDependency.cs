@@ -6,7 +6,7 @@ namespace DeltaWare.Dependencies.Tests
     {
         public TestDisposable TestDisposable { get; }
 
-        public TestDependency(TestDisposable testDisposable)
+        public TestDependency(TestDisposable testDisposable, IMessageLogger message = null)
         {
             TestDisposable = testDisposable;
         }

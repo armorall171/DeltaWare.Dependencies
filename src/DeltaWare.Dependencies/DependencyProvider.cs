@@ -87,30 +87,30 @@ namespace DeltaWare.Dependencies
         /// <inheritdoc cref="IDependencyProvider.TryGetDependency{TDependency}"/>
         public bool TryGetDependency<TDependency>(out TDependency dependencyInstance)
         {
-            if(!HasDependency<TDependency>())
+            if(HasDependency<TDependency>())
             {
-                dependencyInstance = default;
+                dependencyInstance = GetDependency<TDependency>();
 
-                return false;
+                return true;
             }
 
-            dependencyInstance = GetDependency<TDependency>();
+            dependencyInstance = default;
 
-            return true;
+            return false;
         }
 
         public bool TryGetDependency(Type dependencyType, out object dependencyInstance)
         {
             if (HasDependency(dependencyType))
             {
-                dependencyInstance = default;
+                dependencyInstance = GetDependency(dependencyType);
 
-                return false;
+                return true;
             }
 
-            dependencyInstance = GetDependency(dependencyType);
-
-            return true;
+            dependencyInstance = default;
+            
+            return false;
         }
 
         /// <inheritdoc cref="IDependencyProvider.HasDependency{TDependency}"/>

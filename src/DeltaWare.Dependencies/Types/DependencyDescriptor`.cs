@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using DeltaWare.Dependencies.Abstractions.Exceptions;
 
 namespace DeltaWare.Dependencies.Types
 {
@@ -118,12 +119,19 @@ namespace DeltaWare.Dependencies.Types
 
             for(int i = 0; i < parameters.Length; i++)
             {
-                arguments[i] = provider.GetDependency(parameters[i].ParameterType);
+                if(provider.TryGetDependency(parameters[i].ParameterType, out object instance))
+                {
+                    arguments[i] = instance;
+                }
+                else if(!parameters[i].HasDefaultValue)
+                {
+                    throw new DependencyNotFoundException(parameters[i].ParameterType);
+                }
             }
 
-            object instance = (TDependency)Activator.CreateInstance(typeof(TImplementation), arguments);
+            object dependencyInstance = (TDependency)Activator.CreateInstance(typeof(TImplementation), arguments);
 
-            return new DependencyInstance(instance, Type, Lifetime, Binding);
+            return new DependencyInstance(dependencyInstance, Type, Lifetime, Binding);
         }
     }
 }
